@@ -20,3 +20,5 @@
 
 - name: copy config.json template
   template: src=config.json.j2 dest=/opt/mattermost/config/config.json owner=mattermost group=mattermost mode=0644
+
+# GIT commit
