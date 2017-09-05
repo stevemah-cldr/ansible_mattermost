@@ -1,0 +1,36 @@
+---
+# tasks file for database
+
+- name: download mysql repo rpm, install repo, and install mysql
+  get_url: url={{mysql_latest_repo}} dest=/tmp
+
+- name: install mysql repo rpm
+  raw: yum -y localinstall /tmp/{{mysql_latest_repo_rpm}}
+
+- name: install mysql via yum
+  yum: name=mysql-community-server state=latest
+
+- name: install MySQL-python dependancy
+  yum: name=MySQL-python state=latest
+
+- name: start mysql service
+  service: name=mysqld state=started enabled=yes
+
+- name: get mysql password
+# courtesy of https://java8fx.wordpress.com/2017/07/01/ansible-mysql5-7-for-centos7-2/
+  shell: grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}'
+  register: mysql_root_temp_password
+
+- name: print variable for passwd
+  debug: msg="{{mysql_root_temp_password}}"
+
+- name: Set the MySQL root password
+  shell: mysqladmin -u root --password="{{ mysql_root_temp_password.stdout }}" password "{{ mysql_root_password }}"
+  register: mysql_admin_root_password_result
+  failed_when: "'(using password: NO)' in mysql_admin_root_password_result.stderr"
+
+- name: create mmuser
+  mysql_user: login_password=Mattermost8X! login_user=root name=mmuser password={{ mysql_root_password }} priv='*.*:ALL' state=present
+
+- name: create mattermost database
+  mysql_db: name=mattermost state=present login_password=Mattermost8X! login_user=root

@@ -1,0 +1,8 @@
+---
+# tasks file for common
+- name: install common packages
+  yum: name={{ item }} state=latest
+  with_items:
+  - wget
+  - epel-release
+  - ntp

@@ -1,0 +1,27 @@
+---
+  - name: apply the common configuration to all hosts
+    hosts: all
+    remote_user: vagrant
+    become: yes
+    # vars:
+    #   mysql_latest_repo: http://dev.mysql.com/get/mysql57-community-release-el7-9.noarch.rpm
+
+
+    roles:
+    - common
+
+  - name: apply the database configuration
+    hosts: db
+    remote_user: vagrant
+    become: yes
+
+    roles:
+    - database
+
+  - name: Install Mattermost Server / configuration
+    hosts: mm
+    remote_user: vagrant
+    become: yes
+
+    roles:
+    - mattermost

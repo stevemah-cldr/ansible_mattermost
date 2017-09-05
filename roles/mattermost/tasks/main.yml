@@ -1,0 +1,22 @@
+---
+# tasks file for mattermost
+# - name: download Mattermost tarball
+#   get_url: url={{mattermost_latest_version_url}} dest=/tmp
+
+- name: download & extract mattermost tarball
+  unarchive: src={{mattermost_latest_version_url}} dest=/opt remote_src=true
+
+- name: create mattermost group
+  group: name=mattermost
+
+- name: create mattermost user
+  user: name=mattermost group=mattermost
+
+- name: create /opt/mattermost/data
+  file: path=/opt/mattermost/data state=directory
+
+- name: set permissions on /opt/mattermost directory
+  file: path=/opt/mattermost owner=mattermost group=mattermost mode=0775 recurse=yes state=directory
+
+- name: copy config.json template
+  template: src=config.json.j2 dest=/opt/mattermost/config/config.json owner=mattermost group=mattermost mode=0644
