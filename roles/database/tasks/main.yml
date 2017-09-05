@@ -16,7 +16,7 @@
 - name: start mysql service
   service: name=mysqld state=started enabled=yes
 
-- name: get mysql password
+- name: get default randomly generated mysql password
 # courtesy of https://java8fx.wordpress.com/2017/07/01/ansible-mysql5-7-for-centos7-2/
   shell: grep 'temporary password' /var/log/mysqld.log | awk '{print $NF}'
   register: mysql_root_temp_password
@@ -29,8 +29,11 @@
   register: mysql_admin_root_password_result
   failed_when: "'(using password: NO)' in mysql_admin_root_password_result.stderr"
 
-- name: create mmuser
-  mysql_user: login_password=Mattermost8X! login_user=root name=mmuser password={{ mysql_root_password }} priv='*.*:ALL' state=present
-
 - name: create mattermost database
   mysql_db: name=mattermost state=present login_password=Mattermost8X! login_user=root
+
+- name: create mmuser
+  # mysql_user: login_password=Mattermost8X! login_user=root name=mmuser password={{ mysql_root_password }} priv='*.*:ALL' host={{mattermost_server}} state=present
+  mysql_user: login_password=Mattermost8X! login_user=root name=mmuser password={{ mysql_root_password }} priv='mattermost.*:ALL' host={{mattermost_server}} state=present
+# connection only allowed from {{mattermost_server}}
+# mmuser is granted priv to mattermost database only

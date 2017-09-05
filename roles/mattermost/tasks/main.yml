@@ -21,4 +21,8 @@
 - name: copy config.json template
   template: src=config.json.j2 dest=/opt/mattermost/config/config.json owner=mattermost group=mattermost mode=0644
 
-# GIT commit
+- name: install mattermost service
+  template: src=mattermost.service dest=/etc/systemd/system/mattermost.service mode=0664
+
+- name: start and enable mattermost service
+  service: name=mattermost.service state=started enabled=yes

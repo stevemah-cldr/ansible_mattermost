@@ -4,3 +4,4 @@ mysql_latest_repo_rpm: mysql57-community-release-el7-9.noarch.rpm
 mysql_root_password: Mattermost8X!
 mattermost_latest_version_url: https://releases.mattermost.com/4.1.0/mattermost-4.1.0-linux-amd64.tar.gz
 db_server: 192.168.34.11
+mattermost_server: 192.168.34.10
